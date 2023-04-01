@@ -18,5 +18,8 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.AddCommand(json2yamlCmd)
+	rootCmd.AddCommand(
+		json2yamlCmd,
+		yaml2jsonCmd,
+	)
 }
