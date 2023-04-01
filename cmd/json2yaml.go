@@ -11,7 +11,7 @@ import (
 
 var json2yamlCmd = &cobra.Command{
 	Use:     "json2yaml",
-	Aliases: []string{"json2yml", "j2y"},
+	Aliases: []string{"jsontoyaml", "json2yml", "jsontoyml", "j2y", "jtoy", "jy"},
 	Args:    cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var r io.Reader
