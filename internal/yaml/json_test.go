@@ -20,20 +20,24 @@ func TestYAML_FromJSON(t *testing.T) {
   "int": 10,
   "float": 10.11,
   "boolean": true,
+  "null": null,
   "array": [
     "hello",
     10,
-    true
+    true,
+    null
   ],
   "struct": {
     "string": "hello",
     "int": 10,
     "float": 10.11,
     "boolean": true,
+    "null": null,
     "array": [
       "hello",
       10,
-      true
+      true,
+      null
     ]
   }
 }`,
@@ -41,19 +45,23 @@ func TestYAML_FromJSON(t *testing.T) {
 int: 10
 float: 10.11
 boolean: true
+null: null
 array:
   - hello
   - 10
   - true
+  - null
 struct:
   string: hello
   int: 10
   float: 10.11
   boolean: true
+  null: null
   array:
     - hello
     - 10
     - true
+    - null
 `,
 			wantErr: false,
 		},

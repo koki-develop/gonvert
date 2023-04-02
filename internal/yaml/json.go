@@ -71,7 +71,11 @@ func (conv *YAML) parseJSON(dec *json.Decoder, node *yaml.Node) error {
 	default:
 		node.Kind = yaml.ScalarNode
 		node.Tag = ""
-		node.Value = fmt.Sprintf("%v", token)
+		if token != nil {
+			node.Value = fmt.Sprintf("%v", token)
+		} else {
+			node.Value = "null"
+		}
 	}
 
 	return nil
