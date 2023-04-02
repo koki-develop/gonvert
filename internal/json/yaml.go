@@ -82,6 +82,8 @@ func (conv *JSON) encodeJSON(w *bytes.Buffer, yamlNode *yaml.Node) error {
 			v, err = strconv.ParseFloat(yamlNode.Value, 64)
 		case "!!bool":
 			v, err = strconv.ParseBool(yamlNode.Value)
+		case "!!null":
+			v = nil
 		default:
 			v = yamlNode.Value
 		}
