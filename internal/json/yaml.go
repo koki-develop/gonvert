@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"strconv"
 
 	"gopkg.in/yaml.v3"
 )
@@ -65,7 +66,24 @@ func encodeJSON(w *bytes.Buffer, yamlNode *yaml.Node) error {
 		w.WriteString("]")
 
 	case yaml.ScalarNode:
-		valBytes, err := json.Marshal(yamlNode.Value)
+		var v interface{}
+		var err error
+		switch yamlNode.Tag {
+		case "!!str":
+			v = yamlNode.Value
+		case "!!int":
+			v, err = strconv.Atoi(yamlNode.Value)
+		case "!!float":
+			v, err = strconv.ParseFloat(yamlNode.Value, 64)
+		case "!!bool":
+			v, err = strconv.ParseBool(yamlNode.Value)
+		default:
+			v = yamlNode.Value
+		}
+		if err != nil {
+			return err
+		}
+		valBytes, err := json.Marshal(v)
 		if err != nil {
 			return err
 		}
