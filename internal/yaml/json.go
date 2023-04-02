@@ -9,17 +9,31 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func FromJSON(r io.Reader) ([]byte, error) {
+type YAML struct {
+	indent int
+}
+
+type YAMLConfig struct {
+	Indent int
+}
+
+func New(cfg *YAMLConfig) *YAML {
+	return &YAML{
+		indent: cfg.Indent,
+	}
+}
+
+func (conv *YAML) FromJSON(r io.Reader) ([]byte, error) {
 	var root yaml.Node
 
 	dec := json.NewDecoder(r)
-	if err := parseJSON(dec, &root); err != nil {
+	if err := conv.parseJSON(dec, &root); err != nil {
 		return nil, err
 	}
 
 	buf := new(bytes.Buffer)
 	enc := yaml.NewEncoder(buf)
-	enc.SetIndent(2)
+	enc.SetIndent(conv.indent)
 	if err := enc.Encode(&root); err != nil {
 		return nil, err
 	}
@@ -27,7 +41,7 @@ func FromJSON(r io.Reader) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func parseJSON(dec *json.Decoder, node *yaml.Node) error {
+func (conv *YAML) parseJSON(dec *json.Decoder, node *yaml.Node) error {
 	token, err := dec.Token()
 	if err != nil {
 		if err == io.EOF {
@@ -44,10 +58,10 @@ func parseJSON(dec *json.Decoder, node *yaml.Node) error {
 			for dec.More() {
 				var keyNode yaml.Node
 				var valueNode yaml.Node
-				if err := parseJSON(dec, &keyNode); err != nil {
+				if err := conv.parseJSON(dec, &keyNode); err != nil {
 					return err
 				}
-				if err := parseJSON(dec, &valueNode); err != nil {
+				if err := conv.parseJSON(dec, &valueNode); err != nil {
 					return err
 				}
 				node.Content = append(node.Content, &keyNode, &valueNode)
@@ -59,7 +73,7 @@ func parseJSON(dec *json.Decoder, node *yaml.Node) error {
 			node.Kind = yaml.SequenceNode
 			for dec.More() {
 				var childNode yaml.Node
-				if err := parseJSON(dec, &childNode); err != nil {
+				if err := conv.parseJSON(dec, &childNode); err != nil {
 					return err
 				}
 				node.Content = append(node.Content, &childNode)
