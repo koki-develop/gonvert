@@ -9,20 +9,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type YAML struct {
-	indent int
-}
-
-type YAMLConfig struct {
-	Indent int
-}
-
-func New(cfg *YAMLConfig) *YAML {
-	return &YAML{
-		indent: cfg.Indent,
-	}
-}
-
 func (conv *YAML) FromJSON(r io.Reader) ([]byte, error) {
 	var root yaml.Node
 
