@@ -29,7 +29,7 @@ var yaml2jsonCmd = &cobra.Command{
 			r = f
 		}
 
-		j, err := json.FromYAML(r)
+		j, err := json.New(&json.JSONConfig{Indent: 2, Minify: false}).FromYAML(r)
 		if err != nil {
 			return err
 		}

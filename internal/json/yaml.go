@@ -5,32 +5,37 @@ import (
 	"encoding/json"
 	"io"
 	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
 
-func FromYAML(r io.Reader) ([]byte, error) {
+func (conv *JSON) FromYAML(r io.Reader) ([]byte, error) {
 	var root yaml.Node
 	if err := yaml.NewDecoder(r).Decode(&root); err != nil {
 		return nil, err
 	}
 
 	buf := new(bytes.Buffer)
-	if err := encodeJSON(buf, &root); err != nil {
+	if err := conv.encodeJSON(buf, &root); err != nil {
 		return nil, err
+	}
+	if conv.minify {
+		return buf.Bytes(), nil
 	}
 
 	j := new(bytes.Buffer)
-	if err := json.Indent(j, buf.Bytes(), "", "  "); err != nil {
+	ind := strings.Repeat(" ", conv.indent)
+	if err := json.Indent(j, buf.Bytes(), "", ind); err != nil {
 		return nil, err
 	}
 	return j.Bytes(), nil
 }
 
-func encodeJSON(w *bytes.Buffer, yamlNode *yaml.Node) error {
+func (conv *JSON) encodeJSON(w *bytes.Buffer, yamlNode *yaml.Node) error {
 	switch yamlNode.Kind {
 	case yaml.DocumentNode:
-		return encodeJSON(w, yamlNode.Content[0])
+		return conv.encodeJSON(w, yamlNode.Content[0])
 
 	case yaml.MappingNode:
 		w.WriteString("{")
@@ -47,7 +52,7 @@ func encodeJSON(w *bytes.Buffer, yamlNode *yaml.Node) error {
 			}
 			w.Write(keyBytes)
 			w.WriteString(":")
-			if err := encodeJSON(w, val); err != nil {
+			if err := conv.encodeJSON(w, val); err != nil {
 				return err
 			}
 		}
@@ -59,7 +64,7 @@ func encodeJSON(w *bytes.Buffer, yamlNode *yaml.Node) error {
 			if i > 0 {
 				w.WriteString(",")
 			}
-			if err := encodeJSON(w, child); err != nil {
+			if err := conv.encodeJSON(w, child); err != nil {
 				return err
 			}
 		}

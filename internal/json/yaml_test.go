@@ -59,7 +59,8 @@ struct:
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("#%d", i), func(t *testing.T) {
-			got, err := FromYAML(strings.NewReader(tt.yaml))
+			conv := New(&JSONConfig{Indent: 2, Minify: false})
+			got, err := conv.FromYAML(strings.NewReader(tt.yaml))
 
 			if tt.wantErr {
 				assert.Error(t, err)
