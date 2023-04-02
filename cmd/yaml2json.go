@@ -10,9 +10,12 @@ import (
 )
 
 var yaml2jsonCmd = &cobra.Command{
-	Use:     "yaml2json",
-	Aliases: []string{"yamltojson", "yml2json", "ymltojson", "y2j", "ytoj", "yj"},
-	Args:    cobra.MaximumNArgs(1),
+	Use:          "yaml2json",
+	Short:        "Convert YAML to JSON",
+	Long:         "Convert YAML to JSON.",
+	Aliases:      []string{"yamltojson", "yml2json", "ymltojson", "y2j", "ytoj", "yj"},
+	Args:         cobra.MaximumNArgs(1),
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var r io.Reader
 		if len(args) == 0 {
