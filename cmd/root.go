@@ -7,7 +7,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use: "gonvert",
+	Use:   "gonvert",
+	Short: "Convert between JSON, YAML",
+	Long:  "Convert between JSON, YAML",
 }
 
 func Execute() {
